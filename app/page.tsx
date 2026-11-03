@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useCallback } from 'react';
 import { Scale, Gavel, ShieldCheck, Settings, Zap } from 'lucide-react';
@@ -16,15 +16,15 @@ type Etapa = 'uploading' | 'classificando' | 'extraindo' | 'qualificando' | 'con
 type Modo = 'qualificacao' | 'conferencia';
 
 const TIPOS_SUPORTADOS = [
-  'MatrÃ­cula',
+  'Matrícula',
   'Escritura de C/V',
-  'Escritura de DoaÃ§Ã£o',
-  'InventÃ¡rio e Partilha',
+  'Escritura de Doação',
+  'Inventário e Partilha',
   'Formal de Partilha',
-  'UsucapiÃ£o',
-  'AdjudicaÃ§Ã£o CompulsÃ³ria',
+  'Usucapião',
+  'Adjudicação Compulsória',
   'Permuta',
-  'CessÃ£o de Direitos',
+  'Cessão de Direitos',
   'Processo Judicial',
   'CCIR / ITR / CAR',
 ];
@@ -34,7 +34,7 @@ export default function Home() {
   const [modelo, setModelo] = useState<'gemini-4-argon' | 'gemini-3.8-flash'>('gemini-4-argon');
   const [configAberto, setConfigAberto] = useState(false);
 
-  // â”€â”€ Estado QualificaÃ§Ã£o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Estado Qualificação ──────────────────────────────────────────────
   const [arquivos, setArquivos] = useState<File[]>([]);
   const [status, setStatus] = useState<StatusAnalise>('idle');
   const [etapaAtual, setEtapaAtual] = useState<Etapa>('uploading');
@@ -42,7 +42,7 @@ export default function Home() {
   const [resultado, setResultado] = useState<ResultadoQualificacao | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
-  // â”€â”€ Estado ConferÃªncia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Estado Conferência ───────────────────────────────────────────────
   const [statusConf, setStatusConf] = useState<StatusConferencia>('idle');
   const [resultadoConf, setResultadoConf] = useState<ResultadoConferencia | null>(null);
   const [erroConf, setErroConf] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export default function Home() {
     setArquivos(novos);
   }, []);
 
-  // â”€â”€ QualificaÃ§Ã£o Registral â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Qualificação Registral ───────────────────────────────────────────
   const iniciarAnalise = async () => {
     if (arquivos.length === 0) return;
 
@@ -79,7 +79,7 @@ export default function Home() {
       });
 
       if (!resp.ok || !resp.body) {
-        throw new Error('Falha na comunicaÃ§Ã£o com o servidor.');
+        throw new Error('Falha na comunicação com o servidor.');
       }
 
       const reader = resp.body.getReader();
@@ -133,7 +133,7 @@ export default function Home() {
     setErro(null);
   };
 
-  // â”€â”€ ConferÃªncia de Minuta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Conferência de Minuta ────────────────────────────────────────────
   const iniciarConferencia = async (payload: {
     texto_minuta: string;
     arquivos_ref: File[];
@@ -154,37 +154,17 @@ export default function Home() {
         body: formData,
       });
 
-      if (!resp.ok || !resp.body) {
-        throw new Error('Falha na comunicaÃ§Ã£o com o servidor.');
+      if (!resp.ok) {
+        throw new Error('Falha na comunicação com o servidor.');
       }
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const linhas = buffer.split('\n');
-        buffer = linhas.pop() ?? '';
-
-        for (const linha of linhas) {
-          if (!linha.trim()) continue;
-          try {
-            const evento = JSON.parse(linha);
-            if (evento.tipo === 'resultado') {
-              setResultadoConf(evento.dados as ResultadoConferencia);
-              setStatusConf('concluido');
-            } else if (evento.tipo === 'erro') {
-              setErroConf(evento.mensagem);
-              setStatusConf('erro');
-            }
-          } catch {
-            // linha incompleta
-          }
-        }
+      const json = await resp.json();
+      if (json.tipo === 'resultado') {
+        setResultadoConf(json.dados as ResultadoConferencia);
+        setStatusConf('concluido');
+      } else if (json.tipo === 'erro') {
+        setErroConf(json.mensagem);
+        setStatusConf('erro');
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Erro desconhecido.';
@@ -200,7 +180,7 @@ export default function Home() {
     setTextoMinutaConf('');
   };
 
-  // â”€â”€ Troca de modo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Troca de modo ────────────────────────────────────────────────────
   const handleModoChange = (novoModo: Modo) => {
     setModo(novoModo);
     resetar();
@@ -210,7 +190,7 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg)' }}>
 
-      {/* â”€â”€ Header â”€â”€ */}
+      {/* ── Header ── */}
       <header style={{
         backgroundColor: 'var(--surface)',
         borderBottom: '1px solid var(--border)',
@@ -233,12 +213,12 @@ export default function Home() {
                 {modo === 'qualificacao' ? 'Qualificador Registral' : 'Conferidor de Minuta'}
               </h1>
               <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.2 }}>
-                CartÃ³rio de Registro de ImÃ³veis Â· RondÃ´nia
+                Cartório de Registro de Imóveis · Rondônia
               </p>
             </div>
           </div>
 
-          {/* Direita: badge + botÃ£o config */}
+          {/* Direita: badge + botão config */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
               display: 'flex', alignItems: 'center', gap: '5px',
@@ -254,7 +234,7 @@ export default function Home() {
 
             <button
               onClick={() => setConfigAberto(true)}
-              title="ConfiguraÃ§Ãµes de regras"
+              title="Configurações de regras"
               style={{
                 width: '34px', height: '34px', borderRadius: '8px',
                 border: '1px solid var(--border)',
@@ -281,17 +261,17 @@ export default function Home() {
         </div>
       </header>
 
-      {/* â”€â”€ ConteÃºdo principal â”€â”€ */}
+      {/* ── Conteúdo principal ── */}
       <main style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px 64px' }}>
 
-        {/* â”€â”€ Toggle de modo (sempre visÃ­vel) â”€â”€ */}
+        {/* ── Toggle de modo (sempre visível) ── */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
           <ModeToggle modo={modo} onChange={handleModoChange} />
         </div>
 
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-        {/*                 MODO: QUALIFICAÃ‡ÃƒO                    */}
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ════════════════════════════════════════════════════════ */}
+        {/*                 MODO: QUALIFICAÇÃO                      */}
+        {/* ════════════════════════════════════════════════════════ */}
         {modo === 'qualificacao' && (
           <>
             {/* Estado: idle ou erro */}
@@ -299,10 +279,10 @@ export default function Home() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
                   <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '6px' }}>
-                    AnÃ¡lise de TÃ­tulos e MatrÃ­culas
+                    Análise de Títulos e Matrículas
                   </h2>
                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    Envie a matrÃ­cula e o(s) tÃ­tulo(s) para qualificaÃ§Ã£o registral automÃ¡tica com base nas normativas do CRI de RondÃ´nia.
+                    Envie a matrícula e o(s) título(s) para qualificação registral automática com base nas normativas do CRI de Rondônia.
                   </p>
                 </div>
 
@@ -327,8 +307,8 @@ export default function Home() {
                     </p>
                     <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
                       {modelo === 'gemini-4-argon'
-                        ? 'RaciocÃ­nio jurÃ­dico profundo e alta precisÃ£o analÃ­tica (recomendado)'
-                        : 'AnÃ¡lise ultrarrÃ¡pida (ideal para triagem inicial ou tÃ­tulos simples)'}
+                        ? 'Raciocínio jurídico profundo e alta precisão analítica (recomendado)'
+                        : 'Análise ultrarrápida (ideal para triagem inicial ou títulos simples)'}
                     </p>
                   </div>
 
@@ -351,7 +331,7 @@ export default function Home() {
                         transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: '5px',
                       }}
                     >
-                      <Scale size={13} /> Argon (PadrÃ£o)
+                      <Scale size={13} /> Argon (Padrão)
                     </button>
 
                     <button
@@ -365,7 +345,7 @@ export default function Home() {
                         transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: '5px',
                       }}
                     >
-                      <Zap size={13} /> Flash (RÃ¡pido)
+                      <Zap size={13} /> Flash (Rápido)
                     </button>
                   </div>
                 </div>
@@ -378,7 +358,7 @@ export default function Home() {
                     borderRadius: '10px', padding: '12px 16px',
                     display: 'flex', alignItems: 'flex-start', gap: '10px',
                   }}>
-                    <span style={{ fontSize: '16px', flexShrink: 0 }}>âš </span>
+                    <span style={{ fontSize: '16px', flexShrink: 0 }}>⚠</span>
                     <p style={{ fontSize: '14px', color: 'var(--red-text)' }}>{erro}</p>
                   </div>
                 )}
@@ -435,23 +415,23 @@ export default function Home() {
           </>
         )}
 
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-        {/*                 MODO: CONFERÃŠNCIA                     */}
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ════════════════════════════════════════════════════════ */}
+        {/*                 MODO: CONFERÊNCIA                       */}
+        {/* ════════════════════════════════════════════════════════ */}
         {modo === 'conferencia' && (
           <>
             {(statusConf === 'idle' || statusConf === 'erro') && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
                   <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '6px' }}>
-                    ConferÃªncia de Minuta
+                    Conferência de Minuta
                   </h2>
                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    Cole o texto do ato a ser conferido. A IA verifica continuidade de numeraÃ§Ã£o, sequÃªncia de selos, qualificaÃ§Ã£o das partes e conformidade com as normativas do CRI de RondÃ´nia.
+                    Cole o texto do ato a ser conferido. A IA verifica continuidade de numeração, sequência de selos, qualificação das partes e conformidade com as normativas do CRI de Rondônia.
                   </p>
                 </div>
 
-                {/* Seletor de Modelo (conferÃªncia usa roxo) */}
+                {/* Seletor de Modelo (conferência usa roxo) */}
                 <div style={{
                   backgroundColor: 'var(--surface)',
                   border: '1px solid var(--border)',
@@ -472,8 +452,8 @@ export default function Home() {
                     </p>
                     <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
                       {modelo === 'gemini-4-argon'
-                        ? 'ConferÃªncia detalhada com alta precisÃ£o (recomendado)'
-                        : 'ConferÃªncia rÃ¡pida para revisÃ£o prÃ©via'}
+                        ? 'Conferência detalhada com alta precisão (recomendado)'
+                        : 'Conferência rápida para revisão prévia'}
                     </p>
                   </div>
 
@@ -496,7 +476,7 @@ export default function Home() {
                         transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: '5px',
                       }}
                     >
-                      <Scale size={13} /> Argon (PadrÃ£o)
+                      <Scale size={13} /> Argon (Padrão)
                     </button>
 
                     <button
@@ -510,7 +490,7 @@ export default function Home() {
                         transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: '5px',
                       }}
                     >
-                      <Zap size={13} /> Flash (RÃ¡pido)
+                      <Zap size={13} /> Flash (Rápido)
                     </button>
                   </div>
                 </div>
@@ -535,7 +515,7 @@ export default function Home() {
                     borderRadius: '10px', padding: '12px 16px',
                     display: 'flex', alignItems: 'flex-start', gap: '10px',
                   }}>
-                    <span style={{ fontSize: '16px', flexShrink: 0 }}>âš </span>
+                    <span style={{ fontSize: '16px', flexShrink: 0 }}>⚠</span>
                     <p style={{ fontSize: '14px', color: 'var(--red-text)' }}>{erroConf}</p>
                   </div>
                 )}
@@ -556,7 +536,7 @@ export default function Home() {
                   Conferindo a minuta...
                 </p>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Verificando continuidade, selos, qualificaÃ§Ã£o das partes e normativas
+                  Verificando continuidade, selos, qualificação das partes e normativas
                 </p>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </div>
@@ -574,11 +554,10 @@ export default function Home() {
         )}
       </main>
 
-      {/* â”€â”€ Painel de configuraÃ§Ãµes (modal lateral) â”€â”€ */}
+      {/* ── Painel de configurações (modal lateral) ── */}
       {configAberto && (
         <PainelConfiguracoes onFechar={() => setConfigAberto(false)} />
       )}
     </div>
   );
 }
-
