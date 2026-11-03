@@ -202,33 +202,32 @@ export default function SaneamentoPendencia({ pendencia, contexto }: SaneamentoP
           </div>
         )}
 
-        {/* Botão para tentar novamente */}
-        {resultado.status !== 'SANADO' && (
-          <button
-            onClick={reiniciar}
-            style={{
-              alignSelf: 'flex-start',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--brand)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0',
-              textDecoration: 'underline',
-            }}
-          >
-            Tentar com outros documentos
-          </button>
-        )}
+        {/* Botão para tentar novamente / substituir */}
+        <button
+          onClick={reiniciar}
+          style={{
+            alignSelf: 'flex-start',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: 'var(--brand)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0',
+            textDecoration: 'underline',
+            marginTop: '4px',
+          }}
+        >
+          {resultado.status === 'SANADO' ? 'Substituir documentos anexados' : 'Tentar com outros documentos'}
+        </button>
       </div>
     );
   };
 
   return (
-    <div style={{ marginTop: '10px' }}>
-      {/* Botão toggle */}
-      {status !== 'sanado' && (
+    <div style={{ marginTop: '10px', width: '100%' }}>
+      {/* Botão toggle (apenas quando não houver resultado exibido) */}
+      {!resultado && (
         <button
           onClick={() => setAberto(!aberto)}
           style={{
@@ -252,27 +251,15 @@ export default function SaneamentoPendencia({ pendencia, contexto }: SaneamentoP
         </button>
       )}
 
-      {/* Badge de sanado (permanente) */}
-      {status === 'sanado' && resultado && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          fontSize: '12px',
-          fontWeight: 700,
-          color: 'var(--green-text)',
-          backgroundColor: 'var(--green-bg)',
-          border: '1px solid var(--green-border)',
-          borderRadius: '6px',
-          padding: '5px 10px',
-        }}>
-          <CheckCircle2 size={13} style={{ color: 'var(--green)' }} />
-          Pendência sanada — {resultado.explicacao.slice(0, 60)}{resultado.explicacao.length > 60 ? '…' : ''}
+      {/* Resultado completo do saneamento (SANADO, PENDENTE ou PARCIAL) */}
+      {resultado && (
+        <div style={{ width: '100%' }} className="fade-in">
+          <ResultadoBadge />
         </div>
       )}
 
-      {/* Painel de upload */}
-      {aberto && status !== 'sanado' && (
+      {/* Painel de upload (aberto e sem resultado final ativo) */}
+      {aberto && !resultado && (
         <div style={{
           marginTop: '10px',
           backgroundColor: 'var(--surface-2)',
