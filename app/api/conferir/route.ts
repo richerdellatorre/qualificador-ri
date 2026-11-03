@@ -3,6 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 import { CONFERENCIA_SYSTEM_INSTRUCTION } from '@/lib/prompts/conferencia-system';
 import { buildPromptConferencia } from '@/lib/prompts/conf-analisar';
 import { arquivoParaConteudo, ModeloGemini } from '@/lib/gemini';
+import { lerCustomizacoes, conferidorParaPrompt } from '@/lib/github';
 
 export const maxDuration = 300;
 
@@ -57,7 +58,18 @@ export async function POST(request: NextRequest) {
       partes.push(arquivoParaConteudo(buffer, mimeType));
     }
 
-    partes.push({ type: 'text', text: buildPromptConferencia(arquivosRef.length > 0) });
+    let promptConferencia = buildPromptConferencia(arquivosRef.length > 0);
+    try {
+      const { config } = await lerCustomizacoes();
+      const regrasExtras = conferidorParaPrompt(config?.conferidor);
+      if (regrasExtras) {
+        promptConferencia += regrasExtras;
+      }
+    } catch {
+      // Continua sem as customizações caso haja falha de conexão com GitHub
+    }
+
+    partes.push({ type: 'text', text: promptConferencia });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const interaction = await client.interactions.create({

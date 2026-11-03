@@ -254,3 +254,30 @@ export function customizacoesParaPrompt(config: CustomizacoesConfig): string {
 
   return `\n\n---\n# CUSTOMIZAÇÕES DO CARTÓRIO (${config.cartorio})\n${linhas.join('\n')}---\n`;
 }
+
+// ── Formata as exceções e instruções do conferidor para o prompt ──
+export function conferidorParaPrompt(config?: ConfigConferidor): string {
+  if (!config) return '';
+  const linhas: string[] = [];
+
+  const ativas = (config.excecoes ?? []).filter((e) => e.ativo);
+  if (ativas.length > 0) {
+    linhas.push('## EXCEÇÕES DO CARTÓRIO (NÃO APONTAR COMO ERRO OU ATENÇÃO):');
+    for (const exc of ativas) {
+      linhas.push(`- [${exc.codigo}]: ${exc.descricao}`);
+    }
+    linhas.push('');
+  }
+
+  const instrucoes = config.instrucoes_adicionais ?? [];
+  if (instrucoes.length > 0) {
+    linhas.push('## INSTRUÇÕES ADICIONAIS DO CARTÓRIO PARA ESTA MINUTA:');
+    for (const inst of instrucoes) {
+      linhas.push(`- ${inst}`);
+    }
+    linhas.push('');
+  }
+
+  if (linhas.length === 0) return '';
+  return `\n\n---\n# REGRAS E EXCEÇÕES ESPECÍFICAS DO CARTÓRIO PARA CONFERÊNCIA\n${linhas.join('\n')}---\n`;
+}

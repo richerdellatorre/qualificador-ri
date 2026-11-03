@@ -6,6 +6,7 @@ import DropZone from '@/components/DropZone';
 import LoadingProgress from '@/components/LoadingProgress';
 import PainelResultado from '@/components/PainelResultado';
 import PainelConfiguracoes from '@/components/PainelConfiguracoes';
+import PainelRegrasConferidor from '@/components/PainelRegrasConferidor';
 import ModeToggle from '@/components/ModeToggle';
 import EditorMinuta from '@/components/EditorMinuta';
 import PainelConferencia from '@/components/PainelConferencia';
@@ -554,9 +555,13 @@ export default function Home() {
         )}
       </main>
 
-      {/* ── Painel de configurações (modal lateral) ── */}
+      {/* ── Painel de configurações (modal lateral dinâmico por modo) ── */}
       {configAberto && (
-        <PainelConfiguracoes onFechar={() => setConfigAberto(false)} />
+        modo === 'qualificacao' ? (
+          <PainelConfiguracoes onFechar={() => setConfigAberto(false)} />
+        ) : (
+          <PainelRegrasConferidor onFechar={() => setConfigAberto(false)} />
+        )
       )}
     </div>
   );
