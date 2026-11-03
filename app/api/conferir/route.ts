@@ -30,11 +30,11 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
 
         const texto_minuta = (formData.get('texto_minuta') as string) ?? '';
-        const texto_matricula = (formData.get('texto_matricula') as string) ?? '';
         const modeloParam = (formData.get('modelo') as string) ?? 'gemini-4-argon';
-        const modelo: ModeloGemini = modeloParam === 'gemini-3.8-flash' ? 'gemini-3.8-flash' : 'gemini-4-argon';
+        const modelo: ModeloGemini =
+          modeloParam === 'gemini-3.8-flash' ? 'gemini-3.8-flash' : 'gemini-4-argon';
 
-        // Arquivos de referência opcionais (RG, certidão, matrícula em imagem, etc.)
+        // Documentos de referência: matrícula + RG + certidões (todos como arquivo)
         const arquivosRef = formData.getAll('arquivos_ref') as File[];
 
         if (!texto_minuta.trim()) {
@@ -52,21 +52,13 @@ export async function POST(request: NextRequest) {
         // Monta o input multimodal
         const partes: Array<{ type: string; text?: string; data?: string; mime_type?: string }> = [];
 
-        // Texto da matrícula (atos já lançados)
-        if (texto_matricula.trim()) {
-          partes.push({
-            type: 'text',
-            text: `[MATRICULA]\n${texto_matricula.trim()}\n[/MATRICULA]\n\n`,
-          });
-        }
-
         // Texto da minuta a ser conferida
         partes.push({
           type: 'text',
           text: `[MINUTA]\n${texto_minuta.trim()}\n[/MINUTA]\n\n`,
         });
 
-        // Documentos de referência (imagens/PDFs)
+        // Documentos de referência (matrícula, RG, certidões — todos como arquivos)
         for (const arquivo of arquivosRef) {
           const buffer = Buffer.from(await arquivo.arrayBuffer());
           let mimeType = arquivo.type;
@@ -83,13 +75,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Prompt de análise
-        const promptConferencia = buildPromptConferencia(
-          !!texto_matricula.trim(),
-          arquivosRef.length > 0,
-        );
+        const promptConferencia = buildPromptConferencia(arquivosRef.length > 0);
         partes.push({ type: 'text', text: promptConferencia });
 
-        enviar('status', { etapa: 'processando', mensagem: 'Conferindo a minuta com IA...' });
+        enviar('status', {
+          etapa: 'processando',
+          mensagem: 'Conferindo a minuta com IA...',
+        });
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const interaction = await client.interactions.create({
