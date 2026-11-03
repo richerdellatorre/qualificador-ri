@@ -1,12 +1,24 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import type { Apontamento, GravidadeApontamento } from '@/types/conferencia';
 
-const COR_GRAVIDADE: Record<GravidadeApontamento, { bg: string; borda: string; texto: string; label: string }> = {
-  ERRO:     { bg: '#fee2e2', borda: '#fca5a5', texto: '#991b1b', label: 'Erro' },
-  ATENCAO:  { bg: '#fef9c3', borda: '#fde047', texto: '#713f12', label: 'Atenção' },
-  SUGESTAO: { bg: '#dbeafe', borda: '#93c5fd', texto: '#1e40af', label: 'Sugestão' },
+const COR_GRAVIDADE: Record<GravidadeApontamento, {
+  bg: string; borda: string; texto: string; label: string;
+  badgeBg: string; painelBg: string; painelBord: string;
+}> = {
+  ERRO: {
+    bg: '#fee2e2', borda: '#fca5a5', texto: '#991b1b', label: 'Erro',
+    badgeBg: '#ef4444', painelBg: '#fef2f2', painelBord: '#fecaca',
+  },
+  ATENCAO: {
+    bg: '#fef9c3', borda: '#fde047', texto: '#713f12', label: 'Atenção',
+    badgeBg: '#f59e0b', painelBg: '#fffbeb', painelBord: '#fde68a',
+  },
+  SUGESTAO: {
+    bg: '#dbeafe', borda: '#93c5fd', texto: '#1e40af', label: 'Sugestão',
+    badgeBg: '#3b82f6', painelBg: '#eff6ff', painelBord: '#bfdbfe',
+  },
 };
 
 interface Segmento {
@@ -15,7 +27,6 @@ interface Segmento {
 }
 
 function anotarTexto(texto: string, apontamentos: Apontamento[]): Segmento[] {
-  // Filtra apenas apontamentos com trecho válido e que existem no texto
   interface Marcacao extends Apontamento { inicio: number; fim: number }
   const marcacoes: Marcacao[] = [];
 
@@ -26,7 +37,6 @@ function anotarTexto(texto: string, apontamentos: Apontamento[]): Segmento[] {
     marcacoes.push({ ...a, inicio: idx, fim: idx + a.trecho_minuta.length });
   }
 
-  // Ordena por posição; remove sobreposições (maior gravidade ganha)
   const prioridade: Record<GravidadeApontamento, number> = { ERRO: 3, ATENCAO: 2, SUGESTAO: 1 };
   marcacoes.sort((a, b) => a.inicio - b.inicio || prioridade[b.gravidade] - prioridade[a.gravidade]);
 
@@ -39,7 +49,6 @@ function anotarTexto(texto: string, apontamentos: Apontamento[]): Segmento[] {
     }
   }
 
-  // Constrói segmentos
   const segmentos: Segmento[] = [];
   let pos = 0;
   for (const m of definitivas) {
@@ -52,12 +61,6 @@ function anotarTexto(texto: string, apontamentos: Apontamento[]): Segmento[] {
   return segmentos;
 }
 
-interface TooltipState {
-  x: number;
-  y: number;
-  apontamento: Apontamento;
-}
-
 interface TextoAnotadoProps {
   texto: string;
   apontamentos: Apontamento[];
@@ -65,25 +68,11 @@ interface TextoAnotadoProps {
 
 export default function TextoAnotado({ texto, apontamentos }: TextoAnotadoProps) {
   const [selecionado, setSelecionado] = useState<Apontamento | null>(null);
-  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const segmentos = anotarTexto(texto, apontamentos);
   const totalAnotados = segmentos.filter((s) => s.apontamento).length;
 
-  // Fechar tooltip ao clicar fora
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setTooltip(null);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
   if (totalAnotados === 0) {
-    // Nenhum trecho localizado no texto — exibe o texto puro
     return (
       <div style={{
         backgroundColor: '#f8fafc', border: '1px solid var(--border)',
@@ -99,16 +88,17 @@ export default function TextoAnotado({ texto, apontamentos }: TextoAnotadoProps)
     );
   }
 
+  const cfg = selecionado ? COR_GRAVIDADE[selecionado.gravidade] : null;
+
   return (
-    <div ref={containerRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
       {/* Cabeçalho */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
         <p style={{ fontSize: '11px', fontWeight: 700, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
           Texto da minuta anotado
         </p>
-        {/* Legenda */}
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {(['ERRO', 'ATENCAO', 'SUGESTAO'] as GravidadeApontamento[]).map((g) => (
             <span key={g} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b' }}>
               <span style={{
@@ -118,144 +108,125 @@ export default function TextoAnotado({ texto, apontamentos }: TextoAnotadoProps)
               {COR_GRAVIDADE[g].label}
             </span>
           ))}
+          <span style={{ fontSize: '11px', color: '#94a3b8' }}>• Clique no trecho para ver detalhes</span>
         </div>
       </div>
 
-      {/* Texto anotado */}
+      {/* Layout: texto à esquerda, painel lateral à direita */}
       <div style={{
-        backgroundColor: '#fff', border: '1px solid var(--border)',
-        borderRadius: '10px', padding: '20px',
-        fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.85,
-        fontFamily: 'inherit', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-        position: 'relative',
+        display: 'grid',
+        gridTemplateColumns: selecionado ? '1fr 320px' : '1fr',
+        gap: '12px',
+        alignItems: 'start',
+        transition: 'grid-template-columns 0.2s ease',
       }}>
-        {segmentos.map((seg, i) => {
-          if (!seg.apontamento) {
-            return <span key={i}>{seg.texto}</span>;
-          }
 
-          const a = seg.apontamento;
-          const cfg = COR_GRAVIDADE[a.gravidade];
-          const ativo = selecionado?.codigo === a.codigo;
+        {/* Texto anotado */}
+        <div style={{
+          backgroundColor: '#fff', border: '1px solid var(--border)',
+          borderRadius: '10px', padding: '20px',
+          fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.85,
+          fontFamily: 'inherit', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+        }}>
+          {segmentos.map((seg, i) => {
+            if (!seg.apontamento) {
+              return <span key={i}>{seg.texto}</span>;
+            }
 
-          return (
-            <mark
-              key={i}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelecionado(ativo ? null : a);
-                setTooltip(null);
-              }}
-              onMouseEnter={(e) => {
-                if (!ativo) {
-                  const rect = (e.target as HTMLElement).getBoundingClientRect();
-                  const containerRect = containerRef.current!.getBoundingClientRect();
-                  setTooltip({
-                    x: rect.left - containerRect.left,
-                    y: rect.top - containerRect.top - 8,
-                    apontamento: a,
-                  });
-                }
-              }}
-              onMouseLeave={() => setTooltip(null)}
-              style={{
-                backgroundColor: cfg.bg,
-                borderBottom: `2px solid ${cfg.borda}`,
-                borderRadius: '2px',
-                cursor: 'pointer',
-                padding: '0 2px',
-                transition: 'all 0.1s',
-                outline: ativo ? `2px solid ${cfg.borda}` : 'none',
-              }}
-            >
-              {seg.texto}
-            </mark>
-          );
-        })}
+            const a = seg.apontamento;
+            const c = COR_GRAVIDADE[a.gravidade];
+            const ativo = selecionado?.codigo === a.codigo;
 
-        {/* Tooltip flutuante */}
-        {tooltip && (
-          <div
-            style={{
-              position: 'absolute',
-              left: `${Math.min(tooltip.x, 500)}px`,
-              top: `${tooltip.y - 52}px`,
-              backgroundColor: '#1e293b',
-              color: '#f1f5f9',
-              borderRadius: '6px',
-              padding: '6px 10px',
-              fontSize: '11px',
-              fontWeight: 500,
-              lineHeight: 1.4,
-              maxWidth: '260px',
-              pointerEvents: 'none',
-              zIndex: 50,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-              whiteSpace: 'normal',
-            }}
-          >
-            <span style={{ fontWeight: 700, color: COR_GRAVIDADE[tooltip.apontamento.gravidade].bg }}>
-              {tooltip.apontamento.codigo}
-            </span>
-            {' '}· {tooltip.apontamento.descricao.slice(0, 120)}{tooltip.apontamento.descricao.length > 120 ? '…' : ''}
-            <br />
-            <span style={{ fontSize: '10px', color: '#94a3b8' }}>Clique para expandir</span>
-          </div>
-        )}
-      </div>
+            return (
+              <mark
+                key={i}
+                onClick={() => setSelecionado(ativo ? null : a)}
+                title={a.codigo}
+                style={{
+                  backgroundColor: ativo ? c.borda : c.bg,
+                  borderBottom: `2px solid ${c.borda}`,
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  padding: '0 2px',
+                  outline: ativo ? `2px solid ${c.badgeBg}` : 'none',
+                  outlineOffset: '1px',
+                  transition: 'all 0.15s',
+                  fontWeight: ativo ? 600 : 'inherit',
+                }}
+              >
+                {seg.texto}
+              </mark>
+            );
+          })}
+        </div>
 
-      {/* Card expandido do item selecionado */}
-      {selecionado && (() => {
-        const cfg = COR_GRAVIDADE[selecionado.gravidade];
-        return (
+        {/* Painel lateral de detalhes — só aparece ao clicar */}
+        {selecionado && cfg && (
           <div style={{
-            backgroundColor: cfg.bg, border: `1px solid ${cfg.borda}`,
-            borderRadius: '10px', padding: '14px 16px',
-            display: 'flex', flexDirection: 'column', gap: '10px',
-            animation: 'fadeIn 0.15s ease',
+            backgroundColor: cfg.painelBg,
+            border: `1px solid ${cfg.painelBord}`,
+            borderRadius: '10px',
+            padding: '14px 16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            animation: 'slideIn 0.15s ease',
+            alignSelf: 'start',
+            position: 'sticky',
+            top: '80px',
           }}>
+
+            {/* Cabeçalho do painel */}
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-              <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                 <span style={{
-                  fontSize: '10px', fontWeight: 800, color: '#fff',
-                  backgroundColor: cfg.texto === '#991b1b' ? '#ef4444' : cfg.texto === '#713f12' ? '#f59e0b' : '#3b82f6',
-                  padding: '2px 6px', borderRadius: '4px', letterSpacing: '0.05em',
-                  marginRight: '8px',
+                  backgroundColor: cfg.badgeBg, color: '#fff',
+                  fontSize: '9px', fontWeight: 800, padding: '2px 7px',
+                  borderRadius: '3px', letterSpacing: '0.07em',
                 }}>
                   {cfg.label.toUpperCase()}
                 </span>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: '#6b7280' }}>{selecionado.codigo}</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#6b7280' }}>
+                  {selecionado.codigo}
+                </span>
               </div>
               <button
                 onClick={() => setSelecionado(null)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: '16px', lineHeight: 1 }}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#9ca3af', fontSize: '18px', lineHeight: 1,
+                  padding: '0', flexShrink: 0,
+                }}
+                title="Fechar"
               >
                 ×
               </button>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#1e293b', fontWeight: 600, lineHeight: 1.5 }}>
+            {/* Descrição */}
+            <p style={{ fontSize: '13px', color: '#1e293b', fontWeight: 600, lineHeight: 1.55, margin: 0 }}>
               {selecionado.descricao}
             </p>
 
+            {/* Encontrado / Esperado */}
             {(selecionado.valor_encontrado || selecionado.valor_esperado) && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {selecionado.valor_encontrado && (
-                  <div style={{ backgroundColor: '#fee2e2', borderRadius: '6px', padding: '8px 10px' }}>
-                    <p style={{ fontSize: '10px', fontWeight: 700, color: '#991b1b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>
+                  <div style={{ backgroundColor: '#fee2e2', borderRadius: '6px', padding: '7px 10px' }}>
+                    <p style={{ fontSize: '9px', fontWeight: 800, color: '#991b1b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>
                       Encontrado
                     </p>
-                    <p style={{ fontSize: '12px', color: '#7f1d1d', fontWeight: 500 }}>
+                    <p style={{ fontSize: '12px', color: '#7f1d1d', fontWeight: 500, lineHeight: 1.4 }}>
                       {selecionado.valor_encontrado}
                     </p>
                   </div>
                 )}
                 {selecionado.valor_esperado && (
-                  <div style={{ backgroundColor: '#dcfce7', borderRadius: '6px', padding: '8px 10px' }}>
-                    <p style={{ fontSize: '10px', fontWeight: 700, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>
+                  <div style={{ backgroundColor: '#dcfce7', borderRadius: '6px', padding: '7px 10px' }}>
+                    <p style={{ fontSize: '9px', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>
                       Esperado
                     </p>
-                    <p style={{ fontSize: '12px', color: '#14532d', fontWeight: 500 }}>
+                    <p style={{ fontSize: '12px', color: '#14532d', fontWeight: 500, lineHeight: 1.4 }}>
                       {selecionado.valor_esperado}
                     </p>
                   </div>
@@ -263,21 +234,32 @@ export default function TextoAnotado({ texto, apontamentos }: TextoAnotadoProps)
               </div>
             )}
 
+            {/* Sugestão de correção */}
             {selecionado.sugestao_correcao && (
               <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '8px 12px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>
-                  Sugestão de correção
+                <p style={{ fontSize: '9px', fontWeight: 800, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+                  💡 Sugestão de correção
                 </p>
                 <p style={{ fontSize: '12px', color: '#166534', lineHeight: 1.6 }}>
                   {selecionado.sugestao_correcao}
                 </p>
               </div>
             )}
-          </div>
-        );
-      })()}
 
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+            {/* Dica */}
+            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0 }}>
+              Clique novamente no trecho ou × para fechar
+            </p>
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(8px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { AlertTriangle, AlertCircle, Lightbulb, CheckCircle2, Hash, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Lightbulb, CheckCircle2, Hash, Shield, ChevronDown, ChevronUp, Settings } from 'lucide-react';
 import type { ResultadoConferencia, Apontamento } from '@/types/conferencia';
 import TextoAnotado from './TextoAnotado';
+import PainelRegrasConferidor from './PainelRegrasConferidor';
 
 // ── Pluralização em português ─────────────────────────────────
 function plural(palavra: string, qtd: number): string {
@@ -80,6 +81,7 @@ interface PainelConferenciaProps {
 
 export default function PainelConferencia({ resultado, textoMinuta, modelo, onNova }: PainelConferenciaProps) {
   const [okAberto, setOkAberto] = useState(false);
+  const [regrasAberto, setRegrasAberto] = useState(false);
 
   const totalErros = resultado.erros.length;
   const totalAtencoes = resultado.atencoes.length;
@@ -153,6 +155,19 @@ export default function PainelConferencia({ resultado, textoMinuta, modelo, onNo
           }}>
             {modelo === 'gemini-4-argon' ? '🔬 Argon' : '⚡ Flash'}
           </span>
+          {/* Botão regras */}
+          <button
+            onClick={() => setRegrasAberto(true)}
+            title="Personalizar regras e exceções do conferidor"
+            style={{
+              padding: '4px 10px', backgroundColor: 'transparent',
+              border: '1px solid #c4b5fd', borderRadius: '6px',
+              fontSize: '12px', fontWeight: 600, color: '#7c3aed', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '4px',
+            }}
+          >
+            <Settings size={12} /> Regras
+          </button>
           {/* Botão nova */}
           <button onClick={onNova} style={{
             padding: '4px 12px', backgroundColor: 'transparent',
@@ -245,6 +260,9 @@ export default function PainelConferencia({ resultado, textoMinuta, modelo, onNo
           )}
         </div>
       )}
+
+      {/* ── Painel lateral de regras do conferidor ── */}
+      {regrasAberto && <PainelRegrasConferidor onFechar={() => setRegrasAberto(false)} />}
     </div>
   );
 }

@@ -8,12 +8,25 @@ export interface RegraCustomizacao {
   motivo_desativacao?: string;     // Explicação quando ativo = false
 }
 
+export interface RegraConferidor {
+  codigo: string;
+  descricao: string;
+  tipo: 'excecao' | 'instrucao';
+  ativo: boolean;
+}
+
+export interface ConfigConferidor {
+  excecoes: RegraConferidor[];
+  instrucoes_adicionais: string[];
+}
+
 export interface CustomizacoesConfig {
   versao: string;
   cartorio: string;
   ultima_atualizacao: string;
   regras: Record<string, RegraCustomizacao>;
-  instrucoes_adicionais: string[];  // Regras extras livres do cartório
+  instrucoes_adicionais: string[];  // Regras extras livres do cartório (qualificador)
+  conferidor?: ConfigConferidor;    // Exceções e instruções do conferidor de minuta
 }
 
 const DEFAULT_CONFIG: CustomizacoesConfig = {
