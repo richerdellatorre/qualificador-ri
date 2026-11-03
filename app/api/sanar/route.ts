@@ -29,7 +29,11 @@ export async function POST(req: NextRequest) {
       tipo_titulo: string;
       natureza_imovel: string;
       resumo_ia: string;
+      dados_adicionais?: string;
     };
+
+    const modeloParam = (formData.get('modelo') as string) || 'gemini-4-argon';
+    const modelo = modeloParam === 'gemini-3.8-flash' ? 'gemini-3.8-flash' : 'gemini-4-argon';
 
     // ── Documentos de saneamento ────────────────────────────
     const arquivos = formData.getAll('arquivos') as File[];
@@ -60,7 +64,7 @@ export async function POST(req: NextRequest) {
     );
 
     // ── Chama a IA ──────────────────────────────────────────
-    const resultado = await verificarSaneamento(pendencia, contexto, conteudos);
+    const resultado = await verificarSaneamento(pendencia, contexto, conteudos, modelo);
 
     return NextResponse.json(resultado);
   } catch (error) {

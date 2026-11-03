@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Paperclip, Upload, X, CheckCircle2, AlertCircle, AlertTriangle, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Paperclip, Upload, X, CheckCircle2, AlertCircle, AlertTriangle, Loader2, ChevronDown, ChevronUp, Scale } from 'lucide-react';
 import type { Pendencia, ResultadoSaneamento, StatusSaneamento } from '@/types/qualificacao';
 
 interface SaneamentoPendenciaProps {
@@ -10,6 +10,7 @@ interface SaneamentoPendenciaProps {
     tipo_titulo: string;
     natureza_imovel: string;
     resumo_ia: string;
+    dados_adicionais?: string;
   };
 }
 
@@ -105,6 +106,69 @@ export default function SaneamentoPendencia({ pendencia, contexto }: SaneamentoP
         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
           {resultado.explicacao}
         </p>
+
+        {/* Novas Divergências Identificadas */}
+        {resultado.novas_divergencias && resultado.novas_divergencias.length > 0 && (
+          <div style={{
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '10px 12px',
+          }}>
+            <p style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              color: '#991b1b',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              marginBottom: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+            }}>
+              <AlertTriangle size={13} style={{ color: '#dc2626' }} />
+              Novas Divergências no Documento Apresentado
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {resultado.novas_divergencias.map((div, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                  <span style={{ fontSize: '12px', color: '#dc2626', lineHeight: 1.4 }}>•</span>
+                  <p style={{ fontSize: '13px', color: '#991b1b', lineHeight: 1.5, fontWeight: 500 }}>
+                    {div}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alerta de Base de Cálculo / Emolumentos */}
+        {resultado.alerta_base_calculo && (
+          <div style={{
+            backgroundColor: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '8px',
+            padding: '10px 12px',
+          }}>
+            <p style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              color: '#1e40af',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              marginBottom: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+            }}>
+              <Scale size={13} style={{ color: '#2563eb' }} />
+              Impacto na Base de Cálculo / Emolumentos Registrais
+            </p>
+            <p style={{ fontSize: '13px', color: '#1e3a8a', lineHeight: 1.5 }}>
+              {resultado.alerta_base_calculo}
+            </p>
+          </div>
+        )}
 
         {/* O que falta */}
         {resultado.o_que_falta && (

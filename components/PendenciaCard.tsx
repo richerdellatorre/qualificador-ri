@@ -13,6 +13,7 @@ interface PendenciaCardProps {
     tipo_titulo: string;
     natureza_imovel: string;
     resumo_ia: string;
+    dados_adicionais?: string;
   };
 }
 
@@ -259,6 +260,7 @@ interface SecaoPendenciasProps {
     tipo_titulo: string;
     natureza_imovel: string;
     resumo_ia: string;
+    dados_adicionais?: string;
   };
 }
 

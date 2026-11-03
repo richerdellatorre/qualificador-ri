@@ -211,6 +211,8 @@ export async function verificarSaneamento(
     explicacao: (json.explicacao as string) ?? 'Não foi possível analisar os documentos.',
     o_que_falta: json.o_que_falta as string | undefined,
     documentos_verificados: (json.documentos_verificados as string[]) ?? [],
+    novas_divergencias: (json.novas_divergencias as string[]) ?? [],
+    alerta_base_calculo: (json.alerta_base_calculo as string) || undefined,
   };
 }
 

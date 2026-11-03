@@ -223,6 +223,10 @@ export default function PainelResultado({ resultado, onNova }: PainelResultadoPr
               tipo_titulo: resultado.tipo_titulo,
               natureza_imovel: resultado.natureza_imovel,
               resumo_ia: resultado.resumo_ia,
+              dados_adicionais: [
+                ...resultado.documentos_identificados.map(d => d.descricao),
+                ...resultado.itens_ok
+              ].join('; '),
             }}
           />
           <SecaoPendencias
@@ -234,6 +238,10 @@ export default function PainelResultado({ resultado, onNova }: PainelResultadoPr
               tipo_titulo: resultado.tipo_titulo,
               natureza_imovel: resultado.natureza_imovel,
               resumo_ia: resultado.resumo_ia,
+              dados_adicionais: [
+                ...resultado.documentos_identificados.map(d => d.descricao),
+                ...resultado.itens_ok
+              ].join('; '),
             }}
           />
           <SecaoPendencias

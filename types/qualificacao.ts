@@ -109,6 +109,8 @@ export interface ResultadoSaneamento {
   explicacao: string;           // Explicação da IA
   o_que_falta?: string;         // Se PENDENTE ou PARCIAL: o que ainda falta
   documentos_verificados: string[];  // Quais docs foram reconhecidos
+  novas_divergencias?: string[];     // ⚠️ Divergências detectadas no novo documento (Lote, Quadra, Área, etc.)
+  alerta_base_calculo?: string;      // 💰 Impacto na base de cálculo de emolumentos / avaliação fiscal
 }
 
 // ── Refinamento de regras com IA ──────────────────────────────
