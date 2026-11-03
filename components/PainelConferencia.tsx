@@ -5,7 +5,7 @@ import { AlertTriangle, AlertCircle, Lightbulb, CheckCircle2, Hash, Shield, Chev
 import type { ResultadoConferencia, Apontamento } from '@/types/conferencia';
 import TextoAnotado from './TextoAnotado';
 import PainelRegrasConferidor from './PainelRegrasConferidor';
-
+import ModalAjustarRegraConferidor from './ModalAjustarRegraConferidor';
 // ── Pluralização em português ─────────────────────────────────
 function plural(palavra: string, qtd: number): string {
   if (qtd === 1) return `1 ${palavra}`;
@@ -15,7 +15,7 @@ function plural(palavra: string, qtd: number): string {
 }
 
 // ── Card compacto de apontamento ─────────────────────────────
-function CardCompacto({ a }: { a: Apontamento }) {
+function CardCompacto({ a, onAjustar }: { a: Apontamento; onAjustar: (a: Apontamento) => void }) {
   const corBg   = a.gravidade === 'ERRO' ? '#fef2f2' : a.gravidade === 'ATENCAO' ? '#fffbeb' : '#eff6ff';
   const corBord = a.gravidade === 'ERRO' ? '#fecaca' : a.gravidade === 'ATENCAO' ? '#fed7aa' : '#bfdbfe';
   const corBadge = a.gravidade === 'ERRO' ? '#ef4444' : a.gravidade === 'ATENCAO' ? '#f59e0b' : '#3b82f6';
@@ -39,7 +39,7 @@ function CardCompacto({ a }: { a: Apontamento }) {
         <span style={{ fontSize: '11px', color: '#6b7280', flexShrink: 0, marginTop: '1px', fontWeight: 600 }}>
           {a.codigo}
         </span>
-        <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500, lineHeight: 1.4 }}>
+        <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500, lineHeight: 1.4, flex: 1 }}>
           {a.descricao}
         </span>
       </div>
@@ -68,6 +68,21 @@ function CardCompacto({ a }: { a: Apontamento }) {
           💡 {a.sugestao_correcao}
         </p>
       )}
+
+      {/* Linha 4: botão de ajuste com IA */}
+      <div style={{ borderTop: `1px solid ${corBord}`, paddingTop: '7px' }}>
+        <button
+          onClick={() => onAjustar(a)}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '5px',
+            padding: '4px 10px', borderRadius: '5px', border: '1px solid #c4b5fd',
+            backgroundColor: '#f5f3ff', color: '#7c3aed',
+            fontSize: '11px', fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          ✦ Personalizar regra no cartório
+        </button>
+      </div>
     </div>
   );
 }
@@ -82,6 +97,7 @@ interface PainelConferenciaProps {
 export default function PainelConferencia({ resultado, textoMinuta, modelo, onNova }: PainelConferenciaProps) {
   const [okAberto, setOkAberto] = useState(false);
   const [regrasAberto, setRegrasAberto] = useState(false);
+  const [apontamentoAjustando, setApontamentoAjustando] = useState<Apontamento | null>(null);
 
   const totalErros = resultado.erros.length;
   const totalAtencoes = resultado.atencoes.length;
@@ -213,7 +229,7 @@ export default function PainelConferencia({ resultado, textoMinuta, modelo, onNo
             <AlertTriangle size={13} /> Erros críticos
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {resultado.erros.map((a, i) => <CardCompacto key={i} a={a} />)}
+            {resultado.erros.map((a, i) => <CardCompacto key={i} a={a} onAjustar={setApontamentoAjustando} />)}
           </div>
         </section>
       )}
@@ -225,7 +241,7 @@ export default function PainelConferencia({ resultado, textoMinuta, modelo, onNo
             <AlertCircle size={13} /> Atenções
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {resultado.atencoes.map((a, i) => <CardCompacto key={i} a={a} />)}
+            {resultado.atencoes.map((a, i) => <CardCompacto key={i} a={a} onAjustar={setApontamentoAjustando} />)}
           </div>
         </section>
       )}
@@ -263,6 +279,15 @@ export default function PainelConferencia({ resultado, textoMinuta, modelo, onNo
 
       {/* ── Painel lateral de regras do conferidor ── */}
       {regrasAberto && <PainelRegrasConferidor onFechar={() => setRegrasAberto(false)} />}
+
+      {/* ── Modal de ajuste de regra via IA ── */}
+      {apontamentoAjustando && (
+        <ModalAjustarRegraConferidor
+          apontamento={apontamentoAjustando}
+          onFechar={() => setApontamentoAjustando(null)}
+          onSucesso={() => setApontamentoAjustando(null)}
+        />
+      )}
     </div>
   );
 }

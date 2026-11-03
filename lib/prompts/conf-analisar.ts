@@ -25,14 +25,17 @@ O TEXTO DA MINUTA está precedido pela tag [MINUTA].
 
 PASSO 1 — SE HOUVER MATRÍCULA ENVIADA:
 - Listar atos: R-1, AV-2, R-3... → identificar o último número sequencial
-- Extrair selos: capturar apenas a parte numérica (ex: C4ABB30234 → 30234)
-- Identificar o maior número de selo já lançado
+- Extrair selos completos de cada ato (ex: C4ABB30234, C4AAC15001)
+  O formato do selo é: [PREFIXO_BLOCO][NUMERO_SEQUENCIAL]
+  Ex: C4ABB30234 → prefixo = C4ABB, sequencial = 30234
+  Ex: C4AAC15001 → prefixo = C4AAC, sequencial = 15001
+- Identificar o selo do ato IMEDIATAMENTE anterior ao que se pretende lançar
 
 PASSO 2 — EXTRAIR DA MINUTA:
 - Tipo do ato
 - Número do ato (R-x ou AV-x) se constar
 - Número da matrícula
-- Selo digital se constar (extrair parte numérica)
+- Selos digitais da minuta (texto completo, ex: C4ABB30299)
 - Partes e seus dados (nome, RG, CPF, estado civil, regime)
 - Dados do imóvel (área, matrícula, confrontações)
 
@@ -41,9 +44,19 @@ PASSO 3 — VERIFICAÇÕES (apenas o que importa):
 A. CONTINUIDADE: número do ato na minuta = último número da matrícula + 1?
    Se não → ERRO CONTINUIDADE_NUMERACAO
 
-B. SELOS: número sequencial do selo da minuta > maior número da matrícula?
-   Se não → ERRO SEQUENCIA_SELOS
-   Se minuta não tem selo → ATENCAO (normal)
+B. SELOS — REGRA CRÍTICA:
+   BLOCOS DE SELOS SÃO INDEPENDENTES. Cada bloco tem sua própria numeração sequencial reiniciada.
+   O prefixo alfabético identifica o bloco (ex: C4ABB, C4AAC são blocos diferentes).
+   
+   REGRA CORRETA: o selo da minuta deve ser POSTERIOR ao selo do ATO IMEDIATAMENTE ANTERIOR
+   NA MATRÍCULA — e apenas se forem do MESMO BLOCO (mesmo prefixo).
+   
+   - Se selos forem de BLOCOS DIFERENTES (prefixos diferentes) → NÃO é erro, é normal
+     (o cartório começou um novo bloco de selos, que reinicia a numeração)
+   - Se forem do MESMO BLOCO → o número sequencial da minuta deve ser MAIOR que o do ato anterior
+   - Se minuta não tem selo → ATENCAO (normal, pode ser assinatura digital futura)
+   
+   EM CASO DE DÚVIDA sobre o bloco → gere ATENCAO (não ERRO)
 
 C. DOCUMENTO ÚNICO: há mais de um doc de identidade por pessoa?
    Se sim → ERRO DOCUMENTO_IDENTIFICACAO
