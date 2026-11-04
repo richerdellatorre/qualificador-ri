@@ -34,11 +34,12 @@ export function arquivoParaConteudo(
 
 // ─── Faz upload via File API do Gemini (arquivos grandes) ────
 // Retorna um objeto no formato aceito pelo input de interactions
+// Para PDFs usa type: 'document', para imagens usa type: 'image'
 export async function uploadArquivoGemini(
   buffer: Buffer,
   mimeType: string,
   nomeArquivo: string
-): Promise<{ type: 'file'; file_uri: string; mime_type: string }> {
+): Promise<{ type: 'document'; uri: string; mime_type: string } | { type: 'image'; uri: string; mime_type: string }> {
   const client = getClient();
 
   // A File API aceita um Blob/File; construímos um Blob a partir do Buffer
@@ -52,7 +53,10 @@ export async function uploadArquivoGemini(
 
   if (!uploaded.uri) throw new Error('File API não retornou URI para o arquivo enviado.');
 
-  return { type: 'file', file_uri: uploaded.uri, mime_type: mimeType };
+  if (mimeType === 'application/pdf') {
+    return { type: 'document', uri: uploaded.uri, mime_type: mimeType };
+  }
+  return { type: 'image', uri: uploaded.uri, mime_type: mimeType };
 }
 
 // ─── Decide inline vs File API por tamanho ───────────────────
@@ -63,7 +67,8 @@ export async function prepararArquivo(
 ): Promise<
   | { type: 'document'; data: string; mime_type: string }
   | { type: 'image'; data: string; mime_type: string }
-  | { type: 'file'; file_uri: string; mime_type: string }
+  | { type: 'document'; uri: string; mime_type: string }
+  | { type: 'image'; uri: string; mime_type: string }
 > {
   if (buffer.length > UPLOAD_THRESHOLD_BYTES) {
     return uploadArquivoGemini(buffer, mimeType, nomeArquivo);

@@ -25,11 +25,8 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Passo 0: Preparar arquivos (inline base64 ou File API) ──
-    const conteudos: Array<
-      | { type: 'document'; data: string; mime_type: string }
-      | { type: 'image'; data: string; mime_type: string }
-      | { type: 'file'; file_uri: string; mime_type: string }
-    > = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const conteudos: any[] = [];
 
     for (const arquivo of arquivos) {
       const buffer = Buffer.from(await arquivo.arrayBuffer());
