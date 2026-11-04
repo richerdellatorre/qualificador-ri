@@ -5,41 +5,38 @@ Sistema inteligente de apoio à qualificação registral imobiliária e conferê
 
 ---
 
-## 📥 Downloads do Sistema
+## 📥 Download do Sistema (Tudo Incluso)
 
-Escolha a opção mais conveniente para você:
+O pacote completo já vem com tudo pronto: o instalador do Node.js, todas as bibliotecas e o sistema compilado dentro:
 
-### 🌟 Opção 1: Pacote Completo Pronto para Usar (Recomendado - Tudo Incluso)
-*Já vem com todas as bibliotecas e o sistema compilado dentro. Não precisa instalar nada, é só baixar, extrair e usar!*
-
-👉 **[BAIXAR PACOTE COMPLETO PRONTO (.ZIP - 264 MB)](https://github.com/richerdellatorreadv/qualificador-ri/releases/download/v1.0.0/qualificador-ri-completo.zip)**
+👉 **[CLIQUE AQUI PARA BAIXAR O PACOTE COMPLETO (.ZIP - 293 MB)](https://github.com/richerdellatorreadv/qualificador-ri/releases/download/v1.0.0/qualificador-ri-completo.zip)**
 
 ---
 
-### 📦 Opção 2: Código-Fonte Limpo (.ZIP - 700 KB)
-*Apenas os códigos fontes. Exige rodar o instalador `INSTALAR_PRIMEIRA_VEZ.bat` para baixar as bibliotecas.*
+## 🚀 Como Executar em Qualquer Computador (2 Passos Simples)
 
-👉 **[Baixar Código Fonte (.ZIP)](https://github.com/richerdellatorreadv/qualificador-ri/archive/refs/heads/main.zip)**
+Ao descompactar o arquivo `.zip` acima:
+
+1. **Passo 1 (Apenas na 1ª vez que usar o computador)**:
+   - Dê dois cliques no arquivo: **`1_INSTALAR_PRIMEIRO_node-v22-x64.msi`**
+   - Clique em *Next / Avançar* até concluir a instalação do Node.js.
+   - *(Você só faz isso uma única vez por computador).*
+
+2. **Passo 2 (Abrir o programa)**:
+   - Dê dois cliques no arquivo: **`INICIAR_SISTEMA.bat`**
+   - O sistema vai iniciar e abrir automaticamente a tela no seu navegador (`http://localhost:3000`).
+   - Nos próximos dias, basta clicar direto no `INICIAR_SISTEMA.bat`!
 
 ---
 
-## 🚀 Como Executar no seu Computador (Super Fácil)
+## 🌐 Acesso Online Direto (Sem Instalar Nada)
 
-1. **Baixe e extraia** o arquivo `.zip` (Opção 1 acima).
-2. Dê **dois cliques** no arquivo **`INICIAR_SISTEMA.bat`**.
-   - O sistema vai iniciar e **abrir automaticamente a tela no seu navegador** (`http://localhost:3000`).
-   - Para encerrar o programa quando terminar de usar, basta fechar a janela preta.
-
----
-
-## 🌐 Acesso Online Direto (Sem Instalação)
-
-O sistema também está disponível online na nuvem:
+Você também pode acessar diretamente pela nuvem de qualquer dispositivo:
 👉 **[qualificador-ri.onrender.com](https://qualificador-ri.onrender.com)**
 
 ---
 
-## ⚙️ Configuração da Chave Gemini (.env.local)
+## ⚙️ Configuração da Chave (.env.local)
 
 Certifique-se de que o arquivo `.env.local` na pasta contenha sua chave:
 ```env

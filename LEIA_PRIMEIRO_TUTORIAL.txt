@@ -1,0 +1,28 @@
+﻿================================================================
+QUALIFICADOR REGISTRAL - GUIA DE INSTALACAO RAPIDA (2 PASSOS)
+================================================================
+
+Se este e o primeiro computador onde voce esta usando o programa:
+
+PASSO 1:
+De dois cliques no arquivo instalador incluido nesta pasta:
+-> "1_INSTALAR_PRIMEIRO_node-v22-x64.msi"
+
+(Esse e o instalador do Node.js, necessario para o Windows rodar o sistema.
+Basta ir clicando em 'Next' / 'Avancar' ate concluir. Voce so precisa fazer
+isso UMA UNICA VEZ neste computador).
+
+PASSO 2:
+De dois cliques no arquivo:
+-> "INICIAR_SISTEMA.bat"
+
+(O sistema vai iniciar e abrir automaticamente no seu navegador Chrome
+no endereco http://localhost:3000).
+
+----------------------------------------------------------------
+DICA PARA O DIA A DIA:
+Nos proximos dias, voce NUNCA mais precisa instalar o Node.js.
+Basta dar dois cliques direto no "INICIAR_SISTEMA.bat" para usar!
+
+Para encerrar o sistema, basta fechar a janela preta do Prompt.
+================================================================
