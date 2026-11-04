@@ -74,52 +74,30 @@ export default function Home() {
       arquivos.forEach((f) => formData.append('arquivos', f));
       formData.append('modelo', modelo);
 
+      // Simula progresso visual enquanto aguarda resposta
+      setEtapaAtual('classificando');
+      setMensagemEtapa('Identificando os documentos...');
+      setStatus('classificando');
+
       const resp = await fetch('/api/analisar', {
         method: 'POST',
         body: formData,
       });
 
-      if (!resp.ok || !resp.body) {
-        throw new Error('Falha na comunicação com o servidor.');
+      setEtapaAtual('qualificando');
+      setMensagemEtapa('Realizando a qualificação registral...');
+      setStatus('qualificando');
+
+      const dados = await resp.json();
+
+      if (!resp.ok || dados.erro) {
+        throw new Error(dados.erro ?? 'Falha na comunicação com o servidor.');
       }
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const linhas = buffer.split('\n');
-        buffer = linhas.pop() ?? '';
-
-        for (const linha of linhas) {
-          if (!linha.trim()) continue;
-          try {
-            const evento = JSON.parse(linha);
-
-            if (evento.tipo === 'status') {
-              setEtapaAtual(evento.etapa as Etapa);
-              setMensagemEtapa(evento.mensagem);
-
-              if (evento.etapa === 'classificando') setStatus('classificando');
-              if (evento.etapa === 'extraindo') setStatus('extraindo');
-              if (evento.etapa === 'qualificando') setStatus('qualificando');
-              if (evento.etapa === 'concluido') setStatus('concluido');
-            } else if (evento.tipo === 'resultado') {
-              setResultado(evento.dados as ResultadoQualificacao);
-              setStatus('concluido');
-            } else if (evento.tipo === 'erro') {
-              setErro(evento.mensagem);
-              setStatus('erro');
-            }
-          } catch {
-            // linha incompleta
-          }
-        }
-      }
+      setResultado(dados as ResultadoQualificacao);
+      setStatus('concluido');
+      setEtapaAtual('concluido');
+      setMensagemEtapa('Análise concluída.');
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Erro desconhecido.';
       setErro(msg);

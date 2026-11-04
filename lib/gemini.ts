@@ -17,18 +17,58 @@ function getClient() {
   return new GoogleGenAI({ apiKey });
 }
 
-// ─── Converte arquivos para base64 para inline no input ──────
+// ─── Threshold: acima disso usa File API em vez de base64 ────
+const UPLOAD_THRESHOLD_BYTES = 10 * 1024 * 1024; // 10 MB
+
+// ─── Converte arquivos para base64 (arquivos pequenos) ───────
 export function arquivoParaConteudo(
   buffer: Buffer,
   mimeType: string
 ): { type: 'document'; data: string; mime_type: string } | { type: 'image'; data: string; mime_type: string } {
   const base64 = buffer.toString('base64');
-  
   if (mimeType === 'application/pdf') {
     return { type: 'document', data: base64, mime_type: 'application/pdf' };
   }
-  // Imagens (jpg, png, tiff)
   return { type: 'image', data: base64, mime_type: mimeType };
+}
+
+// ─── Faz upload via File API do Gemini (arquivos grandes) ────
+// Retorna um objeto no formato aceito pelo input de interactions
+export async function uploadArquivoGemini(
+  buffer: Buffer,
+  mimeType: string,
+  nomeArquivo: string
+): Promise<{ type: 'file'; file_uri: string; mime_type: string }> {
+  const client = getClient();
+
+  // A File API aceita um Blob/File; construímos um Blob a partir do Buffer
+  const blob = new Blob([new Uint8Array(buffer)], { type: mimeType });
+  const file = new File([blob], nomeArquivo, { type: mimeType });
+
+  const uploaded = await client.files.upload({
+    file,
+    config: { mimeType },
+  });
+
+  if (!uploaded.uri) throw new Error('File API não retornou URI para o arquivo enviado.');
+
+  return { type: 'file', file_uri: uploaded.uri, mime_type: mimeType };
+}
+
+// ─── Decide inline vs File API por tamanho ───────────────────
+export async function prepararArquivo(
+  buffer: Buffer,
+  mimeType: string,
+  nomeArquivo: string
+): Promise<
+  | { type: 'document'; data: string; mime_type: string }
+  | { type: 'image'; data: string; mime_type: string }
+  | { type: 'file'; file_uri: string; mime_type: string }
+> {
+  if (buffer.length > UPLOAD_THRESHOLD_BYTES) {
+    return uploadArquivoGemini(buffer, mimeType, nomeArquivo);
+  }
+  return arquivoParaConteudo(buffer, mimeType);
 }
 
 // ─── Passo 1: Classificação ──────────────────────────────────
