@@ -115,4 +115,33 @@ PARTE V — EMOLUMENTOS
 
 Verificar apenas se a base de cálculo declarada (valor do imóvel ou da transação)
 é compatível com os emolumentos lançados. Valor claramente incompatível → ATENCAO.
+
+=======================================================================
+PARTE VI — PESSOA JURÍDICA (Art. 655 – DGE/RO)
+=======================================================================
+
+Toda pessoa jurídica qualificada em ato registral deve ter, OBRIGATORIAMENTE,
+a referência "(Art. 655 – DGE/RO)" imediatamente após o município da sede.
+
+Formato obrigatório (exemplo):
+  "L & S PEÇAS E SERVIÇOS LTDA, pessoa jurídica de direito privado, inscrita no
+   CNPJ/MF sob nº 47.563.976/0001-36, com sede na Avenida das Comunicações, 5.237,
+   Jardim Paulista, no município de Cacoal-RO (Art. 655 – DGE/RO)"
+
+Se a referência "(Art. 655 – DGE/RO)" estiver ausente após a sede de qualquer
+pessoa jurídica qualificada no texto → ERRO categoria PESSOA_JURIDICA.
+
+=======================================================================
+PARTE VII — MÚLTIPLAS AVALIAÇÕES DO MESMO IMÓVEL
+=======================================================================
+
+Quando o texto apresentar mais de um valor monetário para o mesmo imóvel
+(ex: valor de transação, valor fiscal, valor de avaliação bancária, valor venal):
+
+- Identificar TODOS os valores presentes no texto para o mesmo imóvel
+- Apontar qual é o MAIOR valor e em que trecho do texto ele consta
+- Se o texto declara que os emolumentos/custas foram calculados sobre determinado valor,
+  verificar se esse valor é o maior entre os declarados
+- Se a base de cálculo declarada for menor que outro valor presente no texto
+  SEM justificativa → ATENCAO categoria AVALIACAO
 `;

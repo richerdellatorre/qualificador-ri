@@ -76,8 +76,15 @@ Retorne um JSON com o seguinte schema:
 
 ### SANEAMENTOS:
 - Matrícula urbana: tem cadastro imobiliário? (SO-01)
-- Matrícula rural: tem CCIR, ITR e CAR? (SO-02)
+- Matrícula rural: CCIR, ITR e CAR foram FISICAMENTE ENVIADOS como arquivos?
+  → Atenção: mesmo que a escritura mencione esses documentos, o cartório exige
+    apresentação física. Se não constam como arquivos enviados → SO-02 EXIGÊNCIA.
+- Escritura rural: há declaração de VTI/VTN na escritura ou documento avulso enviado?
+  → Se a escritura rural NÃO traz o VTI/VTN E nenhuma declaração foi enviada → SO-03 EXIGÊNCIA
 - Falta CPF/RG do vendedor na matrícula? (SS-01)
+- Imóvel URBANO: qual é a data do título (escritura ou sentença)?
+  → Se a data for superior a 1 ANO em relação à data de hoje → SO-04 EXIGÊNCIA
+  → Exigir Certidão de Valor Venal expedida pela Prefeitura Municipal de Cacoal
 
 ### DESMEMBRAMENTO:
 - Tem desmembramento na matrícula? → SEMPRE alerta (AL-01)

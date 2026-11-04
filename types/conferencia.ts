@@ -15,6 +15,8 @@ export type CategoriaApontamento =
   | 'DESCRICAO_IMOVEL'         // Área, lote, quadra, matrícula divergente
   | 'DADOS_CRUZADOS'           // Divergência com documento de referência enviado
   | 'EMOLUMENTOS'              // Valores, cálculo ou lançamento de emolumentos
+  | 'PESSOA_JURIDICA'          // Referência (Art. 655 – DGE/RO) ausente após sede da PJ
+  | 'AVALIACAO'                // Múltiplas avaliações do imóvel; maior valor identificado
   | 'NORMATIVA'                // Violação de lei ou provimento registral
   | 'ESTRUTURA'                // Ordem/estrutura do ato
   | 'DOCUMENTO_AUSENTE';       // Referência a documento não enviado pelo usuário
@@ -28,6 +30,7 @@ export interface Apontamento {
   valor_encontrado?: string;         // O que consta na minuta
   valor_esperado?: string;           // O que deveria constar
   sugestao_correcao?: string;        // Texto sugerido para correção
+  regraPersonalizada?: string;       // ID de regra personalizada aplicada (se houver)
 }
 
 export interface ResultadoConferencia {

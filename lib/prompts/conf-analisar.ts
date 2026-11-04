@@ -93,6 +93,22 @@ G. REGIME DE BENS: casado sem regime explícito?
 H. DADOS DO IMÓVEL: números divergentes (área, nº matrícula) com a matrícula enviada?
    → ERRO DESCRICAO_IMOVEL. Diferença de nome de bairro/logradouro → ignorar.
 
+I. PESSOA JURÍDICA (Art. 655 – DGE/RO):
+   Há pessoa jurídica qualificada no texto?
+   → Verificar se "(Art. 655 – DGE/RO)" aparece IMEDIATAMENTE APÓS o município da sede
+     de CADA pessoa jurídica mencionada.
+   → Se ausente em qualquer PJ → ERRO categoria PESSOA_JURIDICA
+   Exemplo correto: "...município de Cacoal-RO (Art. 655 – DGE/RO)"
+
+J. MÚLTIPLAS AVALIAÇÕES:
+   Há mais de um valor monetário diferente para o mesmo imóvel no texto?
+   (ex: valor de transação, valor fiscal, valor de avaliação bancária, valor venal)
+   → Listar todos os valores encontrados
+   → Indicar qual é o MAIOR valor e onde consta no texto
+   → Se a base de cálculo declarada (emolumentos/custas) não for o maior valor,
+     verificar se há justificativa explícita no texto
+   → Se inexplicado → ATENCAO categoria AVALIACAO
+
 NÃO gere apontamentos para:
 - Estilo textual, ortografia, concordância
 - Endereço/bairro do proprietário
@@ -113,7 +129,7 @@ Retorne EXCLUSIVAMENTE um JSON válido:
   "erros": [
     {
       "codigo": "string (ex: 'CONT-01', 'SELO-01', 'DADOS-01')",
-      "categoria": "CONTINUIDADE_NUMERACAO|SEQUENCIA_SELOS|QUALIFICACAO_PARTE|DOCUMENTO_IDENTIFICACAO|UNIAO_ESTAVEL|ESTADO_CIVIL|SOLTEIRO_SEM_UE|DESCRICAO_IMOVEL|DADOS_CRUZADOS|EMOLUMENTOS|NORMATIVA",
+      "categoria": "CONTINUIDADE_NUMERACAO|SEQUENCIA_SELOS|QUALIFICACAO_PARTE|DOCUMENTO_IDENTIFICACAO|UNIAO_ESTAVEL|ESTADO_CIVIL|SOLTEIRO_SEM_UE|DESCRICAO_IMOVEL|DADOS_CRUZADOS|EMOLUMENTOS|PESSOA_JURIDICA|AVALIACAO|NORMATIVA",
       "gravidade": "ERRO",
       "descricao": "Descrição objetiva em 1-2 frases",
       "trecho_minuta": "Trecho EXATO do texto (máx 150 chars) — deve existir literalmente no texto",

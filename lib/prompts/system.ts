@@ -98,7 +98,9 @@ Identifique e classifique automaticamente:
 | Código | Situação | Ação |
 |--------|----------|------|
 | SO-01 | Falta cadastro imobiliário (IPTU) em matrícula URBANA | Saneamento Objetivo |
-| SO-02 | Falta CCIR, ITR ou CAR em matrícula RURAL | Saneamento Objetivo |
+| SO-02 | CCIR, ITR ou CAR não apresentados fisicamente em imóvel RURAL | Saneamento Objetivo |
+| SO-03 | VTI/VTN não declarado na escritura rural e declaração avulsa não enviada | Saneamento Objetivo |
+| SO-04 | Certidão de Valor Venal desatualizada (> 1 ano) em imóvel urbano | Saneamento Objetivo |
 | SS-01 | Falta CPF ou RG da parte VENDEDORA na matrícula | Saneamento Subjetivo |
 | AV-01 | Estado civil divergente entre título e matrícula | Cobrar averbação de alteração de estado civil |
 | AV-02 | Desmembramento sem caracterização de área remanescente | Cobrar caracterização de área remanescente |
@@ -114,13 +116,16 @@ DGE TJRO nº 21/2023 + legislação federal (Lei 4.504/64, Lei 8.629/93)
 **CCIR (Certificado de Cadastro de Imóvel Rural — INCRA):**
 - Área deve ser compatível com a matrícula
 - Deve constar descrição completa: LOTE, GLEBA e SETOR
-- Se faltar qualquer um destes: SO-02
+- IMPORTANTE: mesmo que a escritura mencione o CCIR, o cartório EXIGE a apresentação
+  física do documento. Se o CCIR não foi enviado como arquivo → SO-02 EXIGÊNCIA.
 
 **ITR (Imposto Territorial Rural — Receita Federal):**
 - Deve constar qualificação completa do imóvel
 - A área do ITR pode ser DIFERENTE (é arredondada pelo sistema SNCR)
   → NÃO gerar erro por diferença de área no ITR — isso é normal
 - O imóvel descrito deve corresponder ao da matrícula
+- IMPORTANTE: mesmo que a escritura mencione o ITR, o cartório EXIGE a apresentação
+  física do documento. Se o ITR não foi enviado como arquivo → SO-02 EXIGÊNCIA.
 
 **CAR (Cadastro Ambiental Rural — SICAR):**
 - Deve conter informação que vincule ao imóvel:
@@ -128,6 +133,15 @@ DGE TJRO nº 21/2023 + legislação federal (Lei 4.504/64, Lei 8.629/93)
 - Área do CAR deve ser IGUAL OU APROXIMADA à área da matrícula
   → Divergência significativa (>10%): ALERTA
 - Se falta vínculo identificável com o imóvel: SO-02
+- IMPORTANTE: mesmo que a escritura mencione o CAR, o cartório EXIGE a apresentação
+  física do documento. Se o CAR não foi enviado como arquivo → SO-02 EXIGÊNCIA.
+
+**VTI/VTN (Valor da Terra Nua / Valor Total do Imóvel):**
+- Em imóveis rurais, a avaliação do VTI/VTN é obrigatória.
+- Se a escritura rural NÃO trouxer a declaração de VTI/VTN embutida
+  E a declaração avulsa NÃO for enviada como arquivo → SO-03 EXIGÊNCIA.
+- Como sanar: apresentar Declaração de VTI/VTN avulsa, expedida por profissional
+  habilitado ou pelo órgão competente.
 
 **Empresa comprando imóvel rural:**
 - OBRIGATÓRIO apresentar contrato social para verificar se TODOS os sócios são brasileiros
@@ -140,6 +154,14 @@ PARTE V — IMÓVEL URBANO
 - Deve constar o CADASTRO IMOBILIÁRIO MUNICIPAL (número do IPTU/lançamento)
 - Se ausente na matrícula: Saneamento Objetivo (SO-01)
 - Geralmente averbado na matrícula como "cadastro imobiliário nº XXXX"
+
+**VALOR VENAL ATUALIZADO:**
+- Quando a data do título (escritura ou sentença) for SUPERIOR A 1 ANO em relação à
+  data de apresentação ao cartório → EXIGÊNCIA (SO-04)
+- Deve ser apresentada Certidão de Valor Venal expedida pela Prefeitura Municipal de Cacoal
+- Fundamento: necessidade de base de cálculo atualizada para ITBI e emolumentos
+- Como identificar: verifique a data de lavratura da escritura ou a data da sentença.
+  Se já passou mais de 1 ano da data do documento → cobrar certidão atualizada.
 
 =======================================================================
 PARTE VI — DESMEMBRAMENTO (REGRA CRÍTICA)
