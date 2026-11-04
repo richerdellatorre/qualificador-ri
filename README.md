@@ -5,23 +5,30 @@ Sistema inteligente de apoio à qualificação registral imobiliária e conferê
 
 ---
 
-## 📥 Como Baixar o Sistema
+## 📥 Downloads do Sistema
 
-Você pode baixar todo o projeto compilado e pronto em formato `.zip`:
+Escolha a opção mais conveniente para você:
 
-👉 **[CLIQUE AQUI PARA BAIXAR O SISTEMA (.ZIP)](https://github.com/richerdellatorreadv/qualificador-ri/archive/refs/heads/main.zip)**
+### 🌟 Opção 1: Pacote Completo Pronto para Usar (Recomendado - Tudo Incluso)
+*Já vem com todas as bibliotecas e o sistema compilado dentro. Não precisa instalar nada, é só baixar, extrair e usar!*
+
+👉 **[BAIXAR PACOTE COMPLETO PRONTO (.ZIP - 264 MB)](https://github.com/richerdellatorreadv/qualificador-ri/releases/download/v1.0.0/qualificador-ri-completo.zip)**
+
+---
+
+### 📦 Opção 2: Código-Fonte Limpo (.ZIP - 700 KB)
+*Apenas os códigos fontes. Exige rodar o instalador `INSTALAR_PRIMEIRA_VEZ.bat` para baixar as bibliotecas.*
+
+👉 **[Baixar Código Fonte (.ZIP)](https://github.com/richerdellatorreadv/qualificador-ri/archive/refs/heads/main.zip)**
 
 ---
 
 ## 🚀 Como Executar no seu Computador (Super Fácil)
 
-Não é necessário digitar nenhum comando técnico no terminal. Tudo é feito por duplo clique:
-
-1. **Baixe e extraia** o arquivo `.zip` acima em qualquer pasta do seu computador.
-2. *(Apenas na primeira vez que for rodar)*: Dê dois cliques no arquivo **`INSTALAR_PRIMEIRA_VEZ.bat`** e aguarde ele finalizar.
-3. **Para abrir o programa no dia a dia**: Basta dar dois cliques no arquivo **`INICIAR_SISTEMA.bat`**.
-   - O sistema vai iniciar e **abrir automaticamente a tela do programa no seu navegador** (`http://localhost:3000`).
-   - Para encerrar o programa quando terminar o trabalho, basta fechar a janela preta.
+1. **Baixe e extraia** o arquivo `.zip` (Opção 1 acima).
+2. Dê **dois cliques** no arquivo **`INICIAR_SISTEMA.bat`**.
+   - O sistema vai iniciar e **abrir automaticamente a tela no seu navegador** (`http://localhost:3000`).
+   - Para encerrar o programa quando terminar de usar, basta fechar a janela preta.
 
 ---
 
@@ -32,9 +39,9 @@ O sistema também está disponível online na nuvem:
 
 ---
 
-## ⚙️ Configuração de Chave (.env.local)
+## ⚙️ Configuração da Chave Gemini (.env.local)
 
-Para a inteligência artificial funcionar localmente, garanta que o arquivo `.env.local` na pasta do sistema contenha sua chave:
+Certifique-se de que o arquivo `.env.local` na pasta contenha sua chave:
 ```env
 GEMINI_API_KEY=sua_chave_aqui
 ```
