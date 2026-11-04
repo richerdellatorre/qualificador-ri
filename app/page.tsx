@@ -70,57 +70,18 @@ export default function Home() {
     setErro(null);
 
     try {
-      // Passo 1: upload individual de cada arquivo via /api/upload
-      setMensagemEtapa(`Enviando ${arquivos.length} arquivo(s)...`);
+      const formData = new FormData();
+      arquivos.forEach((f) => formData.append('arquivos', f));
+      formData.append('modelo', modelo);
 
-      const conteudos: Array<{
-        type: 'document' | 'image';
-        data?: string;
-        uri?: string;
-        mime_type: string;
-      }> = [];
-
-      for (let i = 0; i < arquivos.length; i++) {
-        setMensagemEtapa(`Enviando arquivo ${i + 1} de ${arquivos.length}...`);
-
-        const fd = new FormData();
-        fd.append('arquivo', arquivos[i]);
-
-        const uploadResp = await fetch('/api/upload', {
-          method: 'POST',
-          body: fd,
-        });
-
-        const uploadDados = await uploadResp.json();
-
-        if (!uploadResp.ok || uploadDados.erro) {
-          throw new Error(uploadDados.erro ?? `Falha no upload do arquivo ${i + 1}.`);
-        }
-
-        if (uploadDados.modo === 'uri') {
-          conteudos.push({
-            type: uploadDados.type,
-            uri: uploadDados.uri,
-            mime_type: uploadDados.mime_type,
-          });
-        } else {
-          conteudos.push({
-            type: uploadDados.type,
-            data: uploadDados.data,
-            mime_type: uploadDados.mime_type,
-          });
-        }
-      }
-
-      // Passo 2: enviar conteúdos (URIs/base64) para análise
+      // Simula progresso visual enquanto aguarda resposta
       setEtapaAtual('classificando');
       setMensagemEtapa('Identificando os documentos...');
       setStatus('classificando');
 
       const resp = await fetch('/api/analisar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conteudos, modelo }),
+        body: formData,
       });
 
       setEtapaAtual('qualificando');
