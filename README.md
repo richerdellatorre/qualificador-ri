@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏛️ Qualificador Registral & Conferidor de Minuta
+### Cartório de Registro de Imóveis de Rondônia (CRI RO)
 
-## Getting Started
+Sistema inteligente de apoio à qualificação registral imobiliária e conferência minuciosa de minutas antes da impressão, com conformidade às diretrizes do TJRO (DGE TJRO nº 21/2023), Provimento CNJ nº 149/2023, Lei 6.015/73 e Provimento CNJ nº 61/2017.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📥 Como Baixar o Sistema
+
+Você pode baixar todo o projeto compilado e pronto em formato `.zip`:
+
+👉 **[CLIQUE AQUI PARA BAIXAR O SISTEMA (.ZIP)](https://github.com/richerdellatorreadv/qualificador-ri/archive/refs/heads/main.zip)**
+
+---
+
+## 🚀 Como Executar no seu Computador (Super Fácil)
+
+Não é necessário digitar nenhum comando técnico no terminal. Tudo é feito por duplo clique:
+
+1. **Baixe e extraia** o arquivo `.zip` acima em qualquer pasta do seu computador.
+2. *(Apenas na primeira vez que for rodar)*: Dê dois cliques no arquivo **`INSTALAR_PRIMEIRA_VEZ.bat`** e aguarde ele finalizar.
+3. **Para abrir o programa no dia a dia**: Basta dar dois cliques no arquivo **`INICIAR_SISTEMA.bat`**.
+   - O sistema vai iniciar e **abrir automaticamente a tela do programa no seu navegador** (`http://localhost:3000`).
+   - Para encerrar o programa quando terminar o trabalho, basta fechar a janela preta.
+
+---
+
+## 🌐 Acesso Online Direto (Sem Instalação)
+
+O sistema também está disponível online na nuvem:
+👉 **[qualificador-ri.onrender.com](https://qualificador-ri.onrender.com)**
+
+---
+
+## ⚙️ Configuração de Chave (.env.local)
+
+Para a inteligência artificial funcionar localmente, garanta que o arquivo `.env.local` na pasta do sistema contenha sua chave:
+```env
+GEMINI_API_KEY=sua_chave_aqui
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📋 Módulos Principais
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Qualificador Registral**: Análise de PDFs e imagens de títulos e matrículas, verificação de continuidade, desmembramento, ITBI/ITCMD, áreas rurais (CCIR, ITR, CAR, VTI/VTN) e valor venal urbano (> 1 ano).
+2. **Conferidor de Minuta**: Confronto linha a linha do texto da minuta com os documentos de referência, sequência e blocos de selos digitais, Art. 655 DGE/RO para pessoas jurídicas e análise de múltiplas avaliações.
