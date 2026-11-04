@@ -45,11 +45,23 @@ e identifique o último número sequencial.
 PARTE II — SEQUÊNCIA DE SELOS DIGITAIS
 =======================================================================
 
-Formato do selo: PREFIXONNNNN-HHHHH (ex: C4ABB30234-81AFF)
-Apenas a parte numérica (NNNNN) importa para ordenação — ignore prefixo e hash.
+Formato do selo: [PREFIXO][NUMERO_SEQUENCIAL]-[HASH]
+Exemplo: C4ABB30234-81AFF → prefixo = C4ABB, sequencial = 30234, hash = 81AFF
+Apenas a parte numérica sequencial (NNNNN) importa para ordenação.
 
-REGRA: o número sequencial do selo da minuta deve ser MAIOR que todos os selos
-já lançados na matrícula.
+BLOCOS DE SELOS SÃO COMPLETAMENTE INDEPENDENTES.
+O prefixo alfabético identifica o bloco (ex: C4ABB e C4AAC são blocos DISTINTOS).
+Quando o cartório termina um bloco, começa outro bloco com numeração REINICIADA do zero.
+Por isso, é PERFEITAMENTE NORMAL ter selos com números menores em atos mais recentes
+quando o bloco mudou.
+
+REGRA CORRETA:
+- Identifique o prefixo de cada selo (tudo antes dos dígitos numéricos).
+- Compare o selo da minuta APENAS com os selos do MESMO BLOCO (mesmo prefixo) na matrícula.
+- Se a minuta usa prefixo DIFERENTE do último ato da matrícula → NÃO é erro.
+  É simplesmente um novo bloco de selos, com numeração reiniciada — isso é esperado.
+- Se a minuta usa o MESMO prefixo do ato anterior → o número deve ser maior.
+- Em caso de DÚVIDA sobre o bloco → gere ATENCAO (não ERRO).
 
 Se a minuta não tem selo (campo em branco/espaço reservado) → ATENCAO (normal em minuta pré-preenchida).
 

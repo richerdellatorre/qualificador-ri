@@ -44,19 +44,34 @@ PASSO 3 — VERIFICAÇÕES (apenas o que importa):
 A. CONTINUIDADE: número do ato na minuta = último número da matrícula + 1?
    Se não → ERRO CONTINUIDADE_NUMERACAO
 
-B. SELOS — REGRA CRÍTICA:
-   BLOCOS DE SELOS SÃO INDEPENDENTES. Cada bloco tem sua própria numeração sequencial reiniciada.
-   O prefixo alfabético identifica o bloco (ex: C4ABB, C4AAC são blocos diferentes).
-   
-   REGRA CORRETA: o selo da minuta deve ser POSTERIOR ao selo do ATO IMEDIATAMENTE ANTERIOR
-   NA MATRÍCULA — e apenas se forem do MESMO BLOCO (mesmo prefixo).
-   
-   - Se selos forem de BLOCOS DIFERENTES (prefixos diferentes) → NÃO é erro, é normal
-     (o cartório começou um novo bloco de selos, que reinicia a numeração)
-   - Se forem do MESMO BLOCO → o número sequencial da minuta deve ser MAIOR que o do ato anterior
-   - Se minuta não tem selo → ATENCAO (normal, pode ser assinatura digital futura)
-   
-   EM CASO DE DÚVIDA sobre o bloco → gere ATENCAO (não ERRO)
+B. SELOS — REGRA CRÍTICA (leia com atenção antes de qualquer verificação):
+
+   PASSO B1 — EXTRAIA O PREFIXO de cada selo presente na matrícula e na minuta.
+   O prefixo é a parte ALFABÉTICA antes dos dígitos numéricos.
+   Exemplos:
+     C4ABB30234 → prefixo C4ABB, sequencial 30234
+     C4AAC15001 → prefixo C4AAC, sequencial 15001
+     C4ABB38258 → prefixo C4ABB, sequencial 38258
+
+   PASSO B2 — COMPARE APENAS SELOS DO MESMO PREFIXO (mesmo bloco).
+   BLOCOS DIFERENTES = numerações completamente independentes. É ESPERADO e CORRETO
+   que um novo bloco comece com números menores do que selos de blocos anteriores.
+
+   EXEMPLO DE NÃO-ERRO (não gere ERRO neste cenário):
+     Matrícula tem selos C4ABB35321, C4ABB38258 (bloco C4ABB)
+     Minuta usa selos C4AAC30014, C4AAC30015, C4AAC30016 (bloco C4AAC — bloco DIFERENTE)
+     → CORRETO. Prefixos diferentes = blocos independentes. NÃO é erro de sequência.
+
+   EXEMPLO DE ERRO REAL:
+     Matrícula tem C4ABB30100 (bloco C4ABB, sequencial 30100)
+     Minuta usa C4ABB29999 (mesmo bloco C4ABB, sequencial 29999 < 30100)
+     → ERRO SEQUENCIA_SELOS — mesmo bloco, número menor.
+
+   REGRA FINAL:
+   - Prefixos DIFERENTES → NÃO é erro (nunca gere ERRO SEQUENCIA_SELOS por isso)
+   - Mesmo prefixo → o sequencial da minuta deve ser MAIOR que o do ato anterior do mesmo bloco
+   - Em caso de DÚVIDA sobre o prefixo → gere ATENCAO (nunca ERRO)
+   - Minuta sem selo → ATENCAO (normal)
 
 C. DOCUMENTO ÚNICO: há mais de um doc de identidade por pessoa?
    Se sim → ERRO DOCUMENTO_IDENTIFICACAO
