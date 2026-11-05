@@ -5,17 +5,7 @@ Sistema inteligente de apoio à qualificação registral imobiliária e conferê
 
 ---
 
-## 📥 Download do Sistema (Tudo Incluso)
-
-O pacote completo já vem com tudo pronto: o instalador do Node.js, todas as bibliotecas e o sistema compilado dentro:
-
-👉 **[CLIQUE AQUI PARA BAIXAR O PACOTE COMPLETO (.ZIP - 293 MB)](https://github.com/richerdellatorreadv/qualificador-ri/releases/download/v1.0.0/qualificador-ri-completo.zip)**
-
----
-
-## 🚀 Como Executar em Qualquer Computador (2 Passos Simples)
-
-Ao descompactar o arquivo `.zip` acima:
+## 🚀 Como Executar no seu Computador (2 Passos Simples)
 
 1. **Passo 1 (Apenas na 1ª vez que usar o computador)**:
    - Dê dois cliques no arquivo: **`1_INSTALAR_PRIMEIRO_node-v22-x64.msi`**
@@ -25,23 +15,14 @@ Ao descompactar o arquivo `.zip` acima:
 2. **Passo 2 (Abrir o programa)**:
    - Dê dois cliques no arquivo: **`INICIAR_SISTEMA.bat`**
    - O sistema vai iniciar e abrir automaticamente a tela no seu navegador (`http://localhost:3000`).
-   - Nos próximos dias, basta clicar direto no `INICIAR_SISTEMA.bat`!
+   - Mantenha a janela preta aberta enquanto estiver usando. Para encerrar, basta fechar a janela.
 
 ---
 
 ## 🌐 Acesso Online Direto (Sem Instalar Nada)
 
-Você também pode acessar diretamente pela nuvem de qualquer dispositivo:
+Você também pode acessar diretamente pela nuvem:
 👉 **[qualificador-ri.onrender.com](https://qualificador-ri.onrender.com)**
-
----
-
-## ⚙️ Configuração da Chave (.env.local)
-
-Certifique-se de que o arquivo `.env.local` na pasta contenha sua chave:
-```env
-GEMINI_API_KEY=sua_chave_aqui
-```
 
 ---
 

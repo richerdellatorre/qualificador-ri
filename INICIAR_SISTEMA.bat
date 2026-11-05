@@ -34,12 +34,19 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
+echo [OK] Node.js detectado com sucesso.
 echo Iniciando o servidor...
-echo Abrindo seu navegador em http://localhost:3000
+echo Abrindo seu navegador em http://localhost:3000 ...
 echo.
+echo ========================================================
+echo ATENCAO: Mantenha esta janela preta aberta enquanto usar!
 echo Para encerrar o sistema, basta fechar esta janela.
 echo ========================================================
 echo.
 
 start "" "http://localhost:3000"
 call npm run dev
+
+echo.
+echo Servidor encerrado.
+pause
