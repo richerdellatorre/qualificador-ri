@@ -246,6 +246,18 @@ export default function PainelConferencia({ resultado, textoMinuta, modelo, onNo
         </section>
       )}
 
+      {/* ── Cards de sugestões ────────────────────────────────── */}
+      {resultado.sugestoes && resultado.sugestoes.length > 0 && (
+        <section>
+          <p style={{ fontSize: '11px', fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Lightbulb size={13} /> Sugestões
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {resultado.sugestoes.map((a, i) => <CardCompacto key={i} a={a} onAjustar={setApontamentoAjustando} />)}
+          </div>
+        </section>
+      )}
+
       {/* ── Texto da minuta com anotações ───────────────────── */}
       <TextoAnotado texto={textoMinuta} apontamentos={todosApontamentos} />
 
